@@ -13,8 +13,8 @@ import java.util.Map;
 public class naverApicontroller {
 
     public static void main(String[] args) {
-        String clientId = "VhbUCLMP0G9GktY1da2R"; //애플리케이션 클라이언트 아이디값"
-        String clientSecret = "aPV80eOIok"; //애플리케이션 클라이언트 시크릿값"
+        String clientId = ""; //애플리케이션 클라이언트 아이디값"
+        String clientSecret = ""; //애플리케이션 클라이언트 시크릿값"
 
 
         String text = null;
