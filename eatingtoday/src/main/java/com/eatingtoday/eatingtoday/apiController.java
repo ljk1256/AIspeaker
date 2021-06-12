@@ -1,10 +1,12 @@
 package com.eatingtoday.eatingtoday;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.java.Log;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
-import org.apache.tomcat.util.json.ParseException;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,8 +24,8 @@ public class apiController extends naverApicontroller{
     @RequestMapping(value = "/api/test", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     public String getnaverApi(String localdata){
-        String clientId = ""; //애플리케이션 클라이언트 아이디값"
-        String clientSecret = ""; //애플리케이션 클라이언트 시크릿값"
+        String clientId = "VhbUCLMP0G9GktY1da2R"; //애플리케이션 클라이언트 아이디값"
+        String clientSecret = "aPV80eOIok"; //애플리케이션 클라이언트 시크릿값"
 
         localdata = "강남 맛집";        //이거 지워야됨
         String text = localdata;
@@ -44,17 +46,7 @@ public class apiController extends naverApicontroller{
         requestHeaders.put("X-Naver-Client-Secret", clientSecret);
         String responseBody = get(apiURL,requestHeaders);
 
-/*        try{
-            JSONParser jsonParser = new JSONParser();
 
-            JSONObject jsonObject = (JSONObject) jsonParser.parse(responseBody);
-            JSONArray locationObject = (JSONArray) jsonObject.get("items");
-
-            for(int i = 0; i <locationObject.size(); ++i){
-                JSONObject jsonObjects = locationObject.get(i);
-            }
-
-        }*/
         String [] info = {};
         try{
             JSONParser parser = new JSONParser();
@@ -63,6 +55,8 @@ public class apiController extends naverApicontroller{
             JSONArray getArray = (JSONArray) jsonObject.get("items");
 
             for(int i = 0; i < getArray.size(); ++i){
+
+                //JSON to String
                 JSONObject object = (JSONObject) getArray.get(i);
 
                 String getTitle = (String) object.get("title");
@@ -72,11 +66,26 @@ public class apiController extends naverApicontroller{
                 String titleFilter = getTitle.replaceAll("<b>", "");
                 String title = titleFilter.replaceAll("</b>", "");
 
-                System.out.println("상호명: " + title + ", " + "주소: " + address + ", " + "도로명주소: " + roadAddress);
-            }
 
+                //String to JSON
+                ObjectMapper mapper = new ObjectMapper();
+
+                Map<String, String> map = new HashMap<>();
+                map.put("title", title);
+                map.put("address", address);
+                map.put("roadAddress", roadAddress);
+
+                try{
+                    //New JSON
+                    String MyResponseBody = mapper.writeValueAsString(map);
+                    System.out.println(MyResponseBody);
+                }
+                catch (JsonProcessingException e){
+                    e.printStackTrace();
+                }
+            }
         }
-        catch (org.json.simple.parser.ParseException e){
+        catch (ParseException e){
             e.printStackTrace();
         }
 
