@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,7 +25,7 @@ public class apiController extends naverApicontroller{
 
     @RequestMapping(value = "/api/test", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
-    public String getnaverApi(String localdata){
+    public String getnaverApi(String localdata) throws JsonProcessingException {
         String clientId = ""; //애플리케이션 클라이언트 아이디값"
         String clientSecret = ""; //애플리케이션 클라이언트 시크릿값"
 
@@ -47,7 +49,10 @@ public class apiController extends naverApicontroller{
         String responseBody = get(apiURL,requestHeaders);
 
 
-        String [] info = {};
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> map = new HashMap<>();
+
+        List info = new ArrayList();
         try{
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(responseBody.toString());
@@ -68,9 +73,7 @@ public class apiController extends naverApicontroller{
 
 
                 //String to JSON
-                ObjectMapper mapper = new ObjectMapper();
 
-                Map<String, String> map = new HashMap<>();
                 map.put("title", title);
                 map.put("address", address);
                 map.put("roadAddress", roadAddress);
@@ -78,12 +81,13 @@ public class apiController extends naverApicontroller{
                 try{
                     //New JSON
                     String MyResponseBody = mapper.writeValueAsString(map);
-                    System.out.println(MyResponseBody);
+                    info.add(MyResponseBody);
                 }
                 catch (JsonProcessingException e){
                     e.printStackTrace();
                 }
             }
+            System.out.println(info);
         }
         catch (ParseException e){
             e.printStackTrace();
