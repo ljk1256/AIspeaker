@@ -24,8 +24,8 @@ public class apiController extends naverApicontroller{
     @RequestMapping(value = "/api/test", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     public String getnaverApi(String localdata){
-        String clientId = "VhbUCLMP0G9GktY1da2R"; //애플리케이션 클라이언트 아이디값"
-        String clientSecret = "aPV80eOIok"; //애플리케이션 클라이언트 시크릿값"
+        String clientId = ""; //애플리케이션 클라이언트 아이디값"
+        String clientSecret = ""; //애플리케이션 클라이언트 시크릿값"
 
         localdata = "강남 맛집";        //이거 지워야됨
         String text = localdata;
