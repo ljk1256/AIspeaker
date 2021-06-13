@@ -8,10 +8,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -20,12 +17,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@RequestMapping("/api")
 @RestController
 public class apiController extends naverApicontroller{
 
-    @RequestMapping(value = "/api/test", method = RequestMethod.GET)
+    @GetMapping("/test/")
     @ResponseStatus(value = HttpStatus.OK)
-    public String getnaverApi(String localdata) throws JsonProcessingException {
+    @ResponseBody
+    public List<Resturant> getnaverApi(String localdata) throws JsonProcessingException {
+
         String clientId = ""; //애플리케이션 클라이언트 아이디값"
         String clientSecret = ""; //애플리케이션 클라이언트 시크릿값"
 
@@ -49,10 +49,7 @@ public class apiController extends naverApicontroller{
         String responseBody = get(apiURL,requestHeaders);
 
 
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, String> map = new HashMap<>();
-
-        List info = new ArrayList();
+        List<Resturant> info = new ArrayList();
         try{
             JSONParser parser = new JSONParser();
             Object obj = parser.parse(responseBody.toString());
@@ -74,18 +71,8 @@ public class apiController extends naverApicontroller{
 
                 //String to JSON
 
-                map.put("title", title);
-                map.put("address", address);
-                map.put("roadAddress", roadAddress);
-
-                try{
-                    //New JSON
-                    String MyResponseBody = mapper.writeValueAsString(map);
-                    info.add(MyResponseBody);
-                }
-                catch (JsonProcessingException e){
-                    e.printStackTrace();
-                }
+                Resturant resturant = new Resturant(title, address, roadAddress);
+                info.add(resturant);
             }
             System.out.println(info);
         }
@@ -93,8 +80,10 @@ public class apiController extends naverApicontroller{
             e.printStackTrace();
         }
 
-        return responseBody;
+        return info;
     }
+
+
 }
 
 
