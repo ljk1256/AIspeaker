@@ -39,6 +39,4 @@ public class Resturant {
         public void setRoadAddress(String roadAddress) {
                 this.roadAddress = roadAddress;
         }
-
-
 }

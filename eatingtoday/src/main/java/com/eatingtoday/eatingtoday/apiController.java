@@ -26,10 +26,10 @@ public class apiController extends naverApicontroller{
     @ResponseBody
     public List<Resturant> getnaverApi(String localdata) throws JsonProcessingException {
 
-        String clientId = ""; //애플리케이션 클라이언트 아이디값"
-        String clientSecret = ""; //애플리케이션 클라이언트 시크릿값"
+        String clientId = "VhbUCLMP0G9GktY1da2R"; //애플리케이션 클라이언트 아이디값"
+        String clientSecret = "aPV80eOIok"; //애플리케이션 클라이언트 시크릿값"
 
-        localdata = "강남 맛집";        //이거 지워야됨
+        localdata = "건대 맛집";        //이거 지워야됨
         String text = localdata;
         String sort = "comment";
         int display = 5;
@@ -47,6 +47,8 @@ public class apiController extends naverApicontroller{
         requestHeaders.put("X-Naver-Client-Id", clientId);
         requestHeaders.put("X-Naver-Client-Secret", clientSecret);
         String responseBody = get(apiURL,requestHeaders);
+
+        System.out.println(responseBody);
 
 
         List<Resturant> info = new ArrayList();
