@@ -7,6 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,16 +22,18 @@ import java.util.Map;
 @RestController
 public class apiController extends naverApicontroller{
 
-    @GetMapping("/test/")
+    @Autowired
+    private ResturantRepository resturantRepository;
+
+    @GetMapping("/test/{localdata}")
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public List<Resturant> getnaverApi(String localdata) throws JsonProcessingException {
+    public List<Resturant> getnaverApi(@PathVariable String localdata) throws JsonProcessingException {
 
         String clientId = "VhbUCLMP0G9GktY1da2R"; //애플리케이션 클라이언트 아이디값"
         String clientSecret = "aPV80eOIok"; //애플리케이션 클라이언트 시크릿값"
 
-        localdata = "건대 맛집";        //이거 지워야됨
-        String text = localdata;
+        String text = localdata + "맛집";
         String sort = "comment";
         int display = 5;
 
@@ -40,6 +43,12 @@ public class apiController extends naverApicontroller{
             throw new RuntimeException("검색어 인코딩 실패",e);
         }
 
+        List<Resturant> result = getResturant(localdata);
+
+        if(result.size() != 0){
+            System.out.println(localdata + "is found");
+            return result;
+        }
 
         String apiURL = "https://openapi.naver.com/v1/search/local?query=" + text +"&display=" + display + "&sort=" + sort;    // json 결과
 
@@ -57,26 +66,36 @@ public class apiController extends naverApicontroller{
             Object obj = parser.parse(responseBody.toString());
             JSONObject jsonObject = (JSONObject) obj;
             JSONArray getArray = (JSONArray) jsonObject.get("items");
-
+            System.out.println(getArray);
             for(int i = 0; i < getArray.size(); ++i){
 
                 //JSON to String
                 JSONObject object = (JSONObject) getArray.get(i);
 
+
                 String getTitle = (String) object.get("title");
+                String link = (String) object.get("link");
+                String category = (String) object.get("category");
+                String description = (String) object.get("description");
+                String telephone = (String) object.get("telephone");
                 String address = (String) object.get("address");
                 String roadAddress = (String) object.get("roadAddress");
+                String mapx = (String) object.get("mapx");
+                String mapy = (String) object.get("mapy");
+
 
                 String titleFilter = getTitle.replaceAll("<b>", "");
                 String title = titleFilter.replaceAll("</b>", "");
 
 
                 //String to JSON
+                Resturant resturant = new Resturant(
+                        localdata, title,link, category,description,telephone, address, roadAddress, mapx, mapy);
 
-                Resturant resturant = new Resturant(title, address, roadAddress);
+                insertResturant(resturant);
                 info.add(resturant);
+
             }
-            System.out.println(info);
         }
         catch (ParseException e){
             e.printStackTrace();
@@ -85,7 +104,14 @@ public class apiController extends naverApicontroller{
         return info;
     }
 
-
+    //Get Data
+   public List<Resturant> getResturant(String localdata){
+        return resturantRepository.findByLocaldata(localdata);
+   }
+    //insert Data
+   public Resturant insertResturant(Resturant res){
+        return resturantRepository.insert(res);
+   }
 }
 
 
