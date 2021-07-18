@@ -17,6 +17,7 @@ public class naverApicontroller {
         String clientSecret = ""; //애플리케이션 클라이언트 시크릿값"
 
 
+
         String text = null;
         int display = 5;
         try {

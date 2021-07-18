@@ -25,6 +25,7 @@ public class apiController extends naverApicontroller{
     @Autowired
     private ResturantRepository resturantRepository;
 
+
     @GetMapping("/test/{localdata}")
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
